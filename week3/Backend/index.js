@@ -1,14 +1,19 @@
 const express=require('express');
-const {createTodo} =require('./types.js')
+const {createTodo, updateTodo} =require('./types.js');
+const { todo } = require('./db.js');
 
 const app=express();
 
 app.use(express.json());
 
-app.get("/todos",(req,res)=>{
+app.get("/todos",async (req,res)=>{
+   const todos=await todo.find({});
+   res.json({
+      todos: todos
+   })
     
 })
-app.post("/todo",(req,res)=>{
+app.post("/todo",async (req,res)=>{
    const createPayload=req.body();
    const parsePayload=createTodo.safeParse(createPayload);
    if(!parsePayload.success){
@@ -20,11 +25,21 @@ app.post("/todo",(req,res)=>{
       return;
 
    }
+   await todo.create({
+      title: createPayload.title,
+      description: createPayload.description,
+      completed: false,
+
+   })
+
+   res.json({
+      msg: "todo created"
+   })
     
 })
-app.put("/markdone",(req,res)=>{
+app.put("/markdone",async (req,res)=>{
    const createPayload=req.body();
-   const parsePayload=createTodo.safeParse(createPayload);
+   const parsePayload=updateTodo.safeParse(createPayload);
    if(!parsePayload.success){
       res.status(411).json(
          {
@@ -34,6 +49,16 @@ app.put("/markdone",(req,res)=>{
       return;
 
    }
+   await todo.update({
+      _id: req.body.id,
+
+   },{
+      completed: true
+   })
+
+   res.json({
+      msg: "marked as done"
+   })
 
     
 })
