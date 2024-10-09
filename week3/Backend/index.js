@@ -1,10 +1,15 @@
 const express=require('express');
 const {createTodo, updateTodo} =require('./types.js');
 const { todo } = require('./db.js');
+const cors=require('cors')
 
 const app=express();
 
 app.use(express.json());
+
+app.use(cors({
+   origin:"http://localhost:5173"
+}))
 
 app.get("/todos",async (req,res)=>{
    const todos=await todo.find({});
@@ -14,7 +19,7 @@ app.get("/todos",async (req,res)=>{
     
 })
 app.post("/todo",async (req,res)=>{
-   const createPayload=req.body();
+   const createPayload=req.body;
    const parsePayload=createTodo.safeParse(createPayload);
    if(!parsePayload.success){
       res.status(411).json(
@@ -38,7 +43,7 @@ app.post("/todo",async (req,res)=>{
     
 })
 app.put("/markdone",async (req,res)=>{
-   const createPayload=req.body();
+   const createPayload=req.body;
    const parsePayload=updateTodo.safeParse(createPayload);
    if(!parsePayload.success){
       res.status(411).json(
@@ -49,8 +54,8 @@ app.put("/markdone",async (req,res)=>{
       return;
 
    }
-   await todo.update({
-      _id: req.body.id,
+   await todo.updateOne({
+      _id: req.body.id
 
    },{
       completed: true
