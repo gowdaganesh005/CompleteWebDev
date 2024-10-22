@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-mongoose.connect("mongodb+srv://gowda:gowda@cluster0.gmjudtm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("your db url")
 
 
 const todoSchema=mongoose.Schema(
