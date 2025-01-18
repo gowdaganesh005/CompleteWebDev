@@ -13,23 +13,29 @@ wss.on("connection",(ws)=>{
     msg=JSON.parse(msg)
     console.log(msg);
     
-    if(msg.type === "identify-as-sender"){
+    if(msg.type === "sender"){
+        console.log("sender set")
         senderSocket = ws;
-    }else if(msg.type === "identify-as-reciever"){
+    }else if(msg.type === "reciever"){
+        console.log("reciever set")
         reciverSocket = ws;
     }else if( msg.type === "create-offer"){
+        console.log("offer got")
         reciverSocket?.send(JSON.stringify({type:"offer", sdp: msg.sdp}))
     }else if(msg.type === "create-answer") {
+        console.log("answer got")
         senderSocket?.send(JSON.stringify({type:"answer", sdp: msg.sdp   }))
     }else if(msg.type === "iceCandidates") {
         if(ws === senderSocket){
-            reciverSocket?.send(JSON.stringify({type:"candidates",candidates: msg.candidates}))
+            console.log("sender candidates ",msg.candidates)
+            reciverSocket?.send(JSON.stringify({type:"iceCandidates",candidates: msg.candidates}))
         }
         else if(ws === reciverSocket){
-            senderSocket?.send(JSON.stringify({type:"ice-candidates",candidates: msg.candidates}))
+            console.log("reciver candidates ",msg.candidates)
+            senderSocket?.send(JSON.stringify({type:"iceCandidates",candidates: msg.candidates}))
         }
     }
 
-   ws.send("something")
+   
 
 })})
