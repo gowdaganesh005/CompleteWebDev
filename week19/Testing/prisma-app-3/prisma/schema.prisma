@@ -15,5 +15,7 @@ datasource db {
 
 model sum{
   sumId  Int  @id @default(autoincrement())
+  a      Int
+  b      Int
   sum    Int  
 }
